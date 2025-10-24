@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CES Leaderboard</title>
+  <meta name="description" content="Leaderboard for Coherent/Incoherent Reasoning metrics." />
+  <style>
+    :root {
+      --bg: #ffffff;       /* light background */
+      --card: #ffffff;
+      --muted: #5f6b7a;
+      --text: #0b0d12;
+      --accent: #1f6feb;
+      --accent-2: #0ea5a5;
+      --radius: 16px;
+    }
+    html, body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background: var(--bg);
+    }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background: #ffffff;
+    }
+    .wrap { max-width: 1100px; margin: 48px auto; padding: 0 20px; }
+    header {
+      display: grid; gap: 12px; margin-bottom: 22px;
+    }
+    .title { font-size: clamp(28px, 4vw, 40px); line-height: 1.1; font-weight: 750; text-align: center; }
+   .subtitle {
+  margin: 0 auto;
+  text-align: center;
+  font-size: 22px;
+}
+    .card {
+      background: #ffffff;
+      border-radius: var(--radius);
+      border: 2px solid var(--accent);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    }
+    .controls { display:flex; flex-wrap:wrap; gap:12px; align-items:center; padding: 16px; }
+    .search { flex: 1 1 240px; }
+    input[type="search"] {
+      width: 100%; padding: 12px 14px; border-radius: 12px;
+      border: 1px solid rgba(31,111,235,0.5);
+      background: #ffffff; color: var(--text);
+      outline: none;
+    }
+    button, .btn {
+      padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(31,111,235,0.5);
+      background: #f8fafc; color: var(--text); cursor: pointer;
+    }
+    button:hover { border-color: rgba(255,255,255,0.28); }
+
+    .blue table { width: 100%; border-collapse: collapse; border: 1px solid rgba(31,111,235,0.35); table-layout: fixed; }
+    .blue thead th {
+      position: sticky; top: 0; z-index: 1;
+      background: #f6f7fb; color: #334155; text-align: center; font-weight: 700;
+      border-bottom: 1px solid rgba(31,111,235,0.35);
+    }
+    .blue th, .blue td {
+      padding: 12px 14px;
+      border-right: 1px solid rgba(31,111,235,0.35);
+      text-align: center;
+    }
+    .blue tbody tr { border-bottom: 1px solid rgba(31,111,235,0.18); }
+    .blue tbody td:last-child, .blue thead th:last-child { border-right: 0; }
+    tbody td:last-child, thead th:last-child { border-right: 0; }
+    tbody tr:hover { background: rgba(0,0,0,0.03); }
+    .num { text-align: center; font-variant-numeric: tabular-nums; }
+    .tag { font-size: 12px; color: var(--muted); }
+
+    .grid { display: grid; gap: 8px; }
+    .metric-hdr { color: var(--muted); font-size: 12px; letter-spacing: .02em; }
+    .foot { color: var(--muted); margin-top: 18px; }
+    .muted-link { color: var(--accent); text-decoration: none; }
+    .muted-link:hover { text-decoration: underline; }
+
+    .sort { cursor: pointer; user-select: none; }
+    .sort .arrow { opacity: .55; margin-left: 6px; }
+    .hidden { display: none; }
+    html{background:#ffffff !important;}
+  body{background:#ffffff !important;}
+.table-title { text-align: center; color: var(--accent); font-weight: 800; margin: 14px 16px 0; font-size: 1.25rem; }
+.card.green{ border-color:#16a34a; }
+.green table{ width:100%; border-collapse:collapse; border:1px solid rgba(22,163,74,0.35); table-layout:fixed; }
+.green th, .green td{ padding:12px 14px; border-right:1px solid rgba(22,163,74,0.35); text-align:center; }
+.green thead th{ position:sticky; top:0; z-index:1; background:#f6fbf8; color:#14532d; font-weight:700; border-bottom:1px solid rgba(22,163,74,0.35); }
+.green tbody tr{ border-bottom:1px solid rgba(22,163,74,0.18); }
+.green tbody td:last-child, .green thead th:last-child{ border-right:0; }
+.btn-row{ display:flex; gap:12px; align-items:center; justify-content:center; margin:4px 0 14px; }
+.chip{ display:inline-flex; align-items:center; gap:8px; font-weight:800; letter-spacing:.05em; text-decoration:none; padding:8px 12px; border-radius:10px; border:2px solid transparent; transition:transform .08s ease, box-shadow .15s ease; font-size:0.9rem; line-height:1; }
+.chip:hover{ transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,.12); }
+.chip.gh{ background:#0b0d12; color:#fff; }
+.chip.hf{ background:#f5b79d; color:#0b0d12; }
+.chip.split{ padding:0; overflow:hidden; border-radius:10px; border:2px solid #6b7280; }
+.chip.split .left{ background:#4b5563; color:#fff; padding:8px 10px; display:inline-block; }
+.chip.split .right{ background:#8b5cf6; color:white; padding:8px 10px; display:inline-block; }
+.cite{ max-width:1100px; margin: 28px auto 0; padding: 0 20px; }
+.cite-title{ text-align:center; font-size: 25px; margin: 0 0 14px; }
+.bibtex{ background:#f6f7fb; border-left:6px solid #94a3b8; padding:16px; border-radius:10px; overflow:auto; }
+.bibtex code{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; color:#db2777; font-size: 0.95rem; }
+.contact{ color:#475569; margin: 14px 0 0; text-align:center; }
+.title-row{ display:grid; grid-template-columns: 72px 1fr 72px; align-items:center; gap:14px; }
+.title-row img{ height:100px; width:auto; object-fit:contain; }
+@media (max-width: 800px){
+  .title-row{ grid-template-columns: 48px 1fr 48px; gap:10px; }
+  .title-row img{ height:100px; }
+}
+
+.blue thead th,
+.green thead th {
+  font-size: 0.9rem;     /* try 0.85rem if you want smaller */
+  line-height: 1.15;
+  font-weight: 650;       /* was ~700 */
+  padding: 6px 8px 8px;   /* less vertical padding */
+  letter-spacing: .01em;
+}
+
+/* Smaller sort arrow + closer to label */
+th.sort .arrow {
+  font-size: .8em;
+  margin-left: 4px;
+}
+
+/* Optional: even smaller on narrow screens */
+@media (max-width: 980px){
+  .blue thead th,
+  .green thead th { font-size: 0.85rem; }
+}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="title-row">
+        <img class="logo-left" src="logo-left.png" alt="Left logo" />
+        <div class="title">CES Leaderboard</div>
+        <img class="logo-right" src="logo-right.png" alt="Right logo" />
+      </div>
+      <div class="subtitle">This Leaderboard Evaluates LLMs in the Coherency and Consistency of Code Execution Reasoning </div>
+      <div class="btn-row">
+      <a class="chip gh" href="https://github.com/Intelligent-CAT-Lab/CES" target="_blank" rel="noopener" aria-label="GitHub repository">🐙 GITHUB</a>
+      <a class="chip split" href="https://arxiv.org/abs/2510.15079" target="_blank" rel="noopener" aria-label="Paper link">
+        <span class="left">PAPER</span>
+        <span class="right">ICSE'26</span>
+      </a>
+    </div>
+  </header>
+
+
+  <section class="cite">
+      <h2 class="cite-title">🙏 Please cite our paper if you are using CES in your work 🙏</h2>
+      <pre class="bibtex"><code>@article{liu2025assessing,
+  title={Assessing Coherency and Consistency of Code Execution Reasoning by Large Language Models},
+  author={Liu, Changshu and Chen, Yang and Jabbarvand, Reyhaneh},
+  journal={arXiv preprint arXiv:2510.15079},
+  year={2025}
+}</code></pre>
+    </section>
+    <section class="card blue">
+      <h2 class="table-title">Reasoning Coherency</h2>
+      <div class="controls">
+        <div class="search"><input id="q" type="search" placeholder="Search models… (e.g., DeepSeek, CodeLlama, o4-mini)" /></div>
+        <button id="downloadCsv">Download CSV</button>
+      </div>
+      <div style="overflow:auto">
+        <table id="leaderboard" aria-describedby="leaderboard caption">
+          <thead>
+            <tr>
+              <th># Ranking</th>
+              <th>LLM</th>
+              <th class="sort" data-key="coh_correct">Coherent Reasoning & Correct Output (%) <span class="arrow">▾</span></th>
+              <th class="sort" data-key="coh_incorrect">Coherent Reasoning & Incorrect Output (%) <span class="arrow">▾</span></th>
+              <th class="sort" data-key="incoh_correct">Incoherent Reasoning & Correct Output (%) <span class="arrow">▾</span></th>
+              <th class="sort" data-key="incoh_incorrect">Incoherent Reasoning & Incorrect Output (%) <span class="arrow">▾</span></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card green" style="margin-top:24px;">
+      <h2 class="table-title" style="color:#16a34a;">Reasoning Consistency</h2>
+      <div class="controls">
+        <div class="search"><input id="q2" type="search" placeholder="Search models… (e.g., DeepSeek, CodeLlama, o4-mini)" /></div>
+        <button id="downloadCsv2">Download CSV</button>
+      </div>
+      <div style="overflow:auto">
+        <table id="leaderboard2" aria-describedby="leaderboard2 caption">
+          <thead>
+            <tr>
+              <th># Ranking</th>
+              <th>LLM</th>
+              <th class="sort" data-key="strong">Strong Reasoning</th>
+              <th class="sort" data-key="weak">Weak Reasoning</th>
+              <th class="sort" data-key="random">Random Reasoning</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // ——— DATA ———
+    const DATA = [
+      {"#":1,  LLM:"o4-mini",                    coh_correct:74.39, coh_incorrect:6.06,  incoh_correct:19.55, incoh_incorrect:0.00},
+      {"#":2,  LLM:"Gemini-2.5-Pro",             coh_correct:69.08, coh_incorrect:7.88,  incoh_correct:23.04, incoh_incorrect:0.00},
+      {"#":3,  LLM:"DeepSeek-R1",                coh_correct:67.61, coh_incorrect:7.50,  incoh_correct:24.09, incoh_incorrect:0.00},
+      {"#":4,  LLM:"GPT-4-Turbo",                coh_correct:60.98, coh_incorrect:14.02, incoh_correct:25.00, incoh_incorrect:0.00},
+      {"#":5,  LLM:"DeepSeekCoder-Inst-33b",     coh_correct:39.43, coh_incorrect:42.88, incoh_correct:17.28, incoh_incorrect:0.41},
+      {"#":6,  LLM:"Gemini-1.5-Pro",             coh_correct:38.21, coh_incorrect:38.22, incoh_correct:25.26, incoh_incorrect:1.01},
+      {"#":7,  LLM:"StarCoder2-15b",             coh_correct:37.80, coh_incorrect:46.14, incoh_correct:15.45, incoh_incorrect:0.61},
+      {"#":8,  LLM:"SemCoder-S",                  coh_correct:34.96, coh_incorrect:49.39, incoh_correct:15.45, incoh_incorrect:0.20},
+      {"#":9,  LLM:"MagiCoder-S",                 coh_correct:32.72, coh_incorrect:53.05, incoh_correct:14.02, incoh_incorrect:0.21},
+      {"#":10, LLM:"DeepSeekCoder-Inst-6.7b",    coh_correct:31.51, coh_incorrect:49.28, incoh_correct:18.09, incoh_incorrect:1.12},
+      {"#":11, LLM:"DeepSeekCoder-Base-6.7b",    coh_correct:28.04, coh_incorrect:58.75, incoh_correct:13.21, incoh_incorrect:0.00},
+      {"#":12, LLM:"CodeLlama-Inst-34b",         coh_correct:25.17, coh_incorrect:61.47, incoh_correct:13.37, incoh_incorrect:0.00},
+      {"#":13, LLM:"CodeLlama-Inst-13b",         coh_correct:19.14, coh_incorrect:61.11, incoh_correct:18.52, incoh_incorrect:1.23},
+      {"#":14, LLM:"CodeLlama-Inst-7b",          coh_correct:18.40, coh_incorrect:61.85, incoh_correct:16.67, incoh_incorrect:3.09},
+      {"#":15, LLM:"CodeLlama-Base-13b",         coh_correct:17.49, coh_incorrect:67.07, incoh_correct:14.20, incoh_incorrect:1.23},
+      {"#":16, LLM:"CodeLlama-Base-7b",          coh_correct:16.44, coh_incorrect:66.69, incoh_correct:16.87, incoh_incorrect:0.00}
+    ];
+
+    // ——— RENDER (Blue table) ———
+    const tbody = document.querySelector('#leaderboard tbody');
+    const q = document.querySelector('#q');
+
+    let sortKey = 'coh_correct';
+    let sortAsc = false;
+
+    function format(n) { return Number(n).toFixed(2); }
+
+    function render(rows) {
+      tbody.innerHTML = rows.map(r => `
+        <tr>
+          <td class="num">${r['#']}</td>
+          <td>${r.LLM}</td>
+          <td class="num">${format(r.coh_correct)}</td>
+          <td class="num">${format(r.coh_incorrect)}</td>
+          <td class="num">${format(r.incoh_correct)}</td>
+          <td class="num">${format(r.incoh_incorrect)}</td>
+        </tr>`).join('');
+    }
+
+    function apply() {
+      const text = q.value.trim().toLowerCase();
+      let rows = DATA.filter(r => !text || r.LLM.toLowerCase().includes(text));
+      rows.sort((a,b) => {
+        const A = a[sortKey], B = b[sortKey];
+        const cmp = (typeof A === 'string') ? A.localeCompare(B) : (A - B);
+        return sortAsc ? cmp : -cmp;
+      });
+      render(rows);
+    }
+
+    // Initial render
+    apply();
+
+    // Search
+    q.addEventListener('input', apply);
+
+    // Sorting
+    document.querySelectorAll('th.sort').forEach(th => {
+      th.addEventListener('click', () => {
+        const key = th.dataset.key;
+        if (sortKey === key) sortAsc = !sortAsc; else { sortKey = key; sortAsc = true; }
+        apply();
+      });
+    });
+
+    // CSV download
+    document.getElementById('downloadCsv').addEventListener('click', () => {
+      const cols = ['#','LLM','Coherent: Correct (%)','Coherent: Incorrect (%)','Incoherent: Correct (%)','Incoherent: Incorrect (%)'];
+      const rows = [cols.join(',')].concat(
+        DATA.map(r => [r['#'], r.LLM, r.coh_correct, r.coh_incorrect, r.incoh_correct, r.incoh_incorrect].join(','))
+      );
+      const blob = new Blob([rows.join('')], {type: 'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'ces-leaderboard.csv'; a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // ——— RENDER (Green table) ———
+    const DATA2 = [
+      {"#":1, LLM:"o4-mini", strong:18.56, weak:62.56, random:18.88},
+      {"#":2, LLM:"Gemini-2.5-Pro", strong:15.24, weak:64.58, random:20.18},
+      {"#":3, LLM:"DeepSeek-R1", strong:12.02, weak:64.42, random:23.56},
+      {"#":4, LLM:"GPT-4-Turbo", strong:8.85, weak:63.98, random:29.88},
+      {"#":5, LLM:"DeepSeek-Coder-Inst-33b", strong:5.49, weak:42.07, random:52.44},
+      {"#":6, LLM:"Gemini-1.5-Pro", strong:4.88, weak:42.68, random:52.44},
+      {"#":7, LLM:"CodeLlama-Inst-34b-base", strong:2.98, weak:34.07, random:62.95},
+      {"#":8, LLM:"CodeLlama-Inst-13b-base", strong:2.44, weak:33.54, random:64.02},
+      {"#":9, LLM:"SemCoder-S", strong:2.44, weak:50.67, random:46.89},
+      {"#":10, LLM:"DeepSeek-Coder-Inst-6.7b", strong:1.83, weak:35.37, random:62.80},
+      {"#":11, LLM:"CodeLlama-Base-7b", strong:1.83, weak:37.80, random:60.37},
+      {"#":12, LLM:"CodeLlama-Base-13b", strong:1.83, weak:37.80, random:60.37},
+      {"#":13, LLM:"MagicCoder-S-6.7b", strong:1.83, weak:43.90, random:54.27},
+      {"#":14, LLM:"StarCoder2-15b", strong:1.22, weak:46.95, random:51.83},
+      {"#":15, LLM:"DeepSeek-Coder-Base-6.7b", strong:1.22, weak:37.80, random:60.98},
+      {"#":16, LLM:"CodeLlama-Inst-7b", strong:1.22, weak:35.37, random:63.41}
+    ];
+
+    const tbody2 = document.querySelector('#leaderboard2 tbody');
+    const q2 = document.querySelector('#q2');
+    let sortKey2 = 'strong';
+    let sortAsc2 = false;
+
+    function render2(rows) {
+      tbody2.innerHTML = rows.map(r => `
+        <tr>
+          <td class="num">${r['#']}</td>
+          <td>${r.LLM}</td>
+          <td class="num">${format(r.strong)}</td>
+          <td class="num">${format(r.weak)}</td>
+          <td class="num">${format(r.random)}</td>
+        </tr>`).join('');
+    }
+
+    function apply2() {
+      const text = q2.value.trim().toLowerCase();
+      let rows = DATA2.filter(r => !text || r.LLM.toLowerCase().includes(text));
+      rows.sort((a,b) => {
+        const A = a[sortKey2], B = b[sortKey2];
+        const cmp = (typeof A === 'string') ? A.localeCompare(B) : (A - B);
+        return sortAsc2 ? cmp : -cmp;
+      });
+      render2(rows);
+    }
+
+    // Initial render of green table
+    apply2();
+
+    q2.addEventListener('input', apply2);
+
+    document.querySelectorAll('#leaderboard2 th.sort').forEach(th => {
+      th.addEventListener('click', () => {
+        const key = th.dataset.key;
+        if (sortKey2 === key) sortAsc2 = !sortAsc2; else { sortKey2 = key; sortAsc2 = true; }
+        apply2();
+      });
+    });
+
+    document.getElementById('downloadCsv2').addEventListener('click', () => {
+      const cols = ['#','LLM','Strong','Weak','Random'];
+      const rows = [cols.join(',')].concat(
+        DATA2.map(r => [r['#'], r.LLM, r.strong, r.weak, r.random].join(','))
+      );
+      const blob = new Blob([rows.join('')], {type: 'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'ces-consistency.csv'; a.click();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>
